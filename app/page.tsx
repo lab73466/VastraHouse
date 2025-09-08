@@ -82,6 +82,8 @@ import { PremiumHeader } from "@/components/premium-header"
 import { ParallaxHero } from "@/components/parallax-hero"
 import { PremiumHeader } from "@/components/premium-header"
 import { ParallaxHero } from "@/components/parallax-hero"
+import { PremiumHeader } from "@/components/premium-header"
+import { ParallaxHero } from "@/components/parallax-hero"
 import { ScrollAnimation } from "@/components/scroll-animations"
 import { PatternBackground, FloatingPatterns } from "@/components/pattern-backgrounds"
   }
@@ -361,6 +363,19 @@ import { PatternBackground, FloatingPatterns } from "@/components/pattern-backgr
             <h2 className="text-2xl font-playfair font-bold mb-6">You May Also Like</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {relatedProducts.map((relatedProduct) => (
+        <ParallaxHero />
+        <ScrollAnimation>
+          <PatternBackground pattern="paisley" intensity="subtle">
+            <QuickCollections />
+          </PatternBackground>
+        </ScrollAnimation>
+        <ScrollAnimation delay={0.2}>
+          <FeaturedArtisans />
+        </ScrollAnimation>
+    <div className="min-h-screen bg-background relative">
+      <FloatingPatterns />
+      <PremiumHeader />
+            <FestivalCampaign />
         <ParallaxHero />
         <ScrollAnimation>
           <PatternBackground pattern="paisley" intensity="subtle">
