@@ -9,6 +9,11 @@ import { ColorSwatchSelector } from "@/components/color-swatch-selector"
 import { InteractiveSizeGuide } from "@/components/interactive-size-guide"
 import { PremiumBreadcrumb } from "@/components/premium-breadcrumb"
 import { ScrollAnimation } from "@/components/scroll-animations"
+import { PremiumProductGallery } from "@/components/premium-product-gallery"
+import { ColorSwatchSelector } from "@/components/color-swatch-selector"
+import { InteractiveSizeGuide } from "@/components/interactive-size-guide"
+import { PremiumBreadcrumb } from "@/components/premium-breadcrumb"
+import { ScrollAnimation } from "@/components/scroll-animations"
 import { ProductCard } from "@/components/product-card"
 import { useApp } from "@/lib/context/app-context"
 import { Button } from "@/components/ui/button"
@@ -18,14 +23,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, Share2, Star, Truck, Shield, RotateCcw, Award, Ruler, Phone, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
+import { motion } from "framer-motion"
 import Image from "next/image"
 
 export default function ProductDetailPage() {
   const params = useParams()
-  const { state, dispatch } = useApp()
   const [selectedSize, setSelectedSize] = useState("")
   const [selectedColor, setSelectedColor] = useState("")
   const [quantity, setQuantity] = useState(1)
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
 
   const product = state.products.find((p) => p.id === params.id)
@@ -93,9 +99,6 @@ export default function ProductDetailPage() {
           { label: product.category, href: `/products?category=${product.category}` },
           { label: product.name }
         ]} />
-
-        <div className="grid lg:grid-cols-2 gap-16 mb-16">
-          {/* Product Images */}
           <ScrollAnimation>
             <PremiumProductGallery
               images={product.images}
@@ -296,6 +299,207 @@ export default function ProductDetailPage() {
                 </Button>
               </motion.div>
 
+          <ScrollAnimation>
+            <PremiumProductGallery
+              images={product.images}
+              productName={product.name}
+              badges={[
+                ...(product.isNew ? [{ text: "NEW", variant: "default" as const }] : []),
+                ...(product.isFeatured ? [{ text: "FEATURED", variant: "secondary" as const }] : []),
+                ...(product.discount ? [{ text: `${product.discount}% OFF`, variant: "destructive" as const }] : [])
+              ]}
+            />
+          </ScrollAnimation>
+                  <div>
+                    <p className="font-medium">Easy Returns</p>
+                    <p className="text-muted-foreground text-xs">30-day policy</p>
+          <ScrollAnimation delay={0.2}>
+            <div className="space-y-8">
+              {/* Product Header */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  {product.isNew && <Badge>New Arrival</Badge>}
+                  {product.isFeatured && <Badge variant="secondary">Editor's Choice</Badge>}
+                  {product.discount && <Badge variant="destructive">{product.discount}% OFF</Badge>}
+                </div>
+                </div>
+                <h1 className="text-4xl font-playfair font-bold mb-4 text-gradient-gold">{product.name}</h1>
+                <div className="flex items-center gap-3 text-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-5 w-5 ${
+                          i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {product.rating} ({product.reviewCount} reviews)
+                  </span>
+                </div>
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="text-4xl font-bold text-primary">₹{product.price.toLocaleString()}</span>
+                  {product.originalPrice && (
+                    <span className="text-2xl text-muted-foreground line-through">
+                      ₹{product.originalPrice.toLocaleString()}
+                    </span>
+                  )}
+                  {product.discount && (
+                    <Badge variant="destructive" className="text-sm">
+                      Save ₹{(product.originalPrice! - product.price).toLocaleString()}
+                    </Badge>
+                  )}
+                </div>
+                    <Shield className="h-5 w-5 text-primary" />
+                <p className="text-lg text-muted-foreground leading-relaxed">{product.description}</p>
+              </motion.div>
+                  </div>
+              {/* Heritage Info */}
+              {product.heritage && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-6 border border-primary/10"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <Award className="w-5 h-5 text-primary" />
+                    <span className="font-semibold text-primary">Heritage Craft</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">Region:</span> {product.heritage.region}
+                    </div>
+                    <div>
+                      <span className="font-medium">Craft:</span> {product.heritage.craft}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-3">{product.heritage.history}</p>
+                </motion.div>
+              )}
+                  <div>
+              {/* Size Selection */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium">Size</label>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="text-xs bg-transparent"
+                  >
+                    <Ruler className="w-3 h-3 mr-1" />
+                    Size Guide
+                  </Button>
+                </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {product.sizes.map((size) => (
+                    <motion.button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`p-3 border rounded-lg text-sm font-medium transition-all duration-200 ${
+                        selectedSize === size
+                          ? "border-primary bg-primary text-primary-foreground shadow-lg scale-105"
+                          : "border-border hover:border-primary/50 hover:scale-102"
+                      }`}
+                      whileHover={{ scale: selectedSize === size ? 1.05 : 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {size}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+                    <p className="font-medium">Authentic</p>
+              {/* Color Selection */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <ColorSwatchSelector
+                  colors={product.colors}
+                  selectedColor={selectedColor}
+                  onColorChange={setSelectedColor}
+                />
+              </motion.div>
+                    <p className="text-muted-foreground text-xs">Guaranteed genuine</p>
+              {/* Quantity */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="space-y-4"
+              >
+                <label className="block text-sm font-medium">Quantity</label>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border rounded-lg">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="rounded-r-none"
+                    >
+                      -
+                    </Button>
+                    <span className="w-16 text-center py-2 border-x">{quantity}</span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="rounded-l-none"
+                    >
+                      +
+                    </Button>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    {product.stockCount} in stock
+                  </Badge>
+                </div>
+              </motion.div>
+                  </div>
+              {/* Action Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="space-y-4"
+              >
+                <div className="flex gap-4">
+                  <Button 
+                    onClick={handleAddToCart} 
+                    className="flex-1 h-14 text-lg font-medium"
+                    disabled={!product.inStock}
+                  >
+                    {product.inStock ? "Add to Cart" : "Out of Stock"}
+                  </Button>
+                  <Button variant="outline" onClick={handleToggleWishlist} className="h-14 px-6">
+                    <Heart className={`h-5 w-5 ${isInWishlist ? "fill-current text-red-500" : ""}`} />
+                  </Button>
+                  <Button variant="outline" className="h-14 px-6">
+                    <Share2 className="h-5 w-5" />
+                  </Button>
+                </div>
+        <div className="grid lg:grid-cols-2 gap-16 mb-16">
+                <Button variant="outline" className="w-full h-12 bg-transparent">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Ask Our Styling Expert
+                </Button>
+              </motion.div>
+                <div className="flex items-center gap-3 text-sm">
               {/* Trust Indicators */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -340,12 +544,13 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
               </motion.div>
-            </div>
+          </ScrollAnimation>
           </ScrollAnimation>
         </div>
 
         {/* Product Details Tabs */}
         <ScrollAnimation>
+          <Tabs defaultValue="details" className="mb-16">
           <Tabs defaultValue="details" className="mb-16">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="details">Details</TabsTrigger>
@@ -435,10 +640,12 @@ export default function ProductDetailPage() {
             </TabsContent>
           </Tabs>
         </ScrollAnimation>
+        </ScrollAnimation>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <ScrollAnimation>
+            <section>
             <section>
               <h2 className="text-2xl font-playfair font-bold mb-6">You May Also Like</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -448,8 +655,16 @@ export default function ProductDetailPage() {
               </div>
             </section>
           </ScrollAnimation>
+          </ScrollAnimation>
         )}
       </main>
+
+      {/* Size Guide Modal */}
+      <InteractiveSizeGuide
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        category={product.category}
+      />
 
       {/* Size Guide Modal */}
       <InteractiveSizeGuide

@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { PremiumHeader } from "@/components/premium-header"
+import { ParallaxHero } from "@/components/parallax-hero"
+import { ScrollAnimation } from "@/components/scroll-animations"
+import { PatternBackground, FloatingPatterns } from "@/components/pattern-backgrounds"
 import { ProductCard } from "@/components/product-card"
 import { useApp } from "@/lib/context/app-context"
 import { Button } from "@/components/ui/button"
@@ -78,8 +80,9 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background relative">
+      <FloatingPatterns />
+      <PremiumHeader />
 
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
@@ -346,11 +349,23 @@ export default function ProductDetailPage() {
             <h2 className="text-2xl font-playfair font-bold mb-6">You May Also Like</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {relatedProducts.map((relatedProduct) => (
-                <ProductCard key={relatedProduct.id} product={relatedProduct} viewMode="grid" />
-              ))}
-            </div>
-          </section>
-        )}
+        <ParallaxHero />
+        <ScrollAnimation>
+          <PatternBackground pattern="paisley" intensity="subtle">
+            <QuickCollections />
+          </PatternBackground>
+        </ScrollAnimation>
+        <ScrollAnimation delay={0.2}>
+          <FeaturedArtisans />
+        </ScrollAnimation>
+        <ScrollAnimation delay={0.4}>
+          <PatternBackground pattern="mandala" intensity="medium">
+            <FestivalCampaign />
+          </PatternBackground>
+        </ScrollAnimation>
+        <ScrollAnimation delay={0.6}>
+          <InteractiveCultureMap />
+        </ScrollAnimation>
       </main>
 
       <Footer />
